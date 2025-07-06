@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Use - TechVantage Solutions</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
+                <i class="fas fa-chart-line me-2"></i>TechVantage Solutions
+            </a>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h1>Terms of Use</h1>
+                <p class="text-muted">Last updated: July 6, 2025</p>
+                
+                <h2>1. Acceptance of Terms</h2>
+                <p>By accessing and using the TechVantage Solutions website, you accept and agree to be bound by the terms and provision of this agreement.</p>
+                
+                <h2>2. Services Description</h2>
+                <p>TechVantage Solutions provides technology consulting services including but not limited to strategic IT planning, cloud migration, cybersecurity assessment, and digital transformation services.</p>
+                
+                <h2>3. User Responsibilities</h2>
+                <p>Users are responsible for:</p>
+                <ul>
+                    <li>Providing accurate and complete information when using our services</li>
+                    <li>Maintaining the confidentiality of any account information</li>
+                    <li>Using our services in compliance with all applicable laws and regulations</li>
+                </ul>
+                
+                <h2>4. Intellectual Property</h2>
+                <p>All content on this website, including but not limited to text, graphics, logos, and images, is the property of TechVantage Solutions and is protected by copyright laws.</p>
+                
+                <h2>5. Limitation of Liability</h2>
+                <p>TechVantage Solutions shall not be liable for any direct, indirect, incidental, special, or consequential damages resulting from the use of our services.</p>
+                
+                <h2>6. Privacy</h2>
+                <p>Your privacy is important to us. Please review our Privacy Policy, which also governs your use of our services.</p>
+                
+                <h2>7. Modifications</h2>
+                <p>We reserve the right to modify these terms at any time. Changes will be posted on this page with an updated revision date.</p>
+                
+                <h2>8. Contact Information</h2>
+                <p>If you have any questions about these Terms of Use, please contact us at info@techvantagesolutions.com.</p>
+                
+                <div class="mt-5">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
