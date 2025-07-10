@@ -26,11 +26,23 @@ add_action('admin_menu', function() {
         'dashicons-format-image',
         80
     );
+    add_submenu_page(
+        'gorsel-seo-asistani',
+        'Yardım & Destek',
+        'Yardım & Destek',
+        'manage_options',
+        'gorsel-seo-asistani-help',
+        'gsa_help_page'
+    );
 });
 
 // Admin paneli sayfası
 function gsa_admin_page() {
     require_once GSA_PATH . 'admin/settings-page.php';
+}
+
+function gsa_help_page() {
+    require_once GSA_PATH . 'admin/help-page.php';
 }
 
 // Gerekli dosyaları dahil et

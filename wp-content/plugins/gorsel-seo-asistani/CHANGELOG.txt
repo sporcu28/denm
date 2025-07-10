@@ -1,0 +1,4 @@
+=== Değişiklik Günlüğü ===
+
+= 1.0 =
+* İlk sürüm: Eksik alt etiketli görselleri bulma, yapay zekâ ile öneri, toplu güncelleme, CSV/JSON dışa aktarım, SEO bilgilendirme kutusu.
