@@ -1,0 +1,23 @@
+table.widefat.fixed th, table.widefat.fixed td {
+    text-align: left;
+    vertical-align: middle;
+}
+table.widefat.fixed img {
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.notice-info {
+    background: #f0f6fc;
+    border-left: 4px solid #2271b1;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+}
+button.button-primary {
+    background: #2271b1;
+    border-color: #1d6fa5;
+    color: #fff;
+}
+button.button-primary:hover {
+    background: #195c8a;
+    border-color: #195c8a;
+}
