@@ -4,8 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Modal, TextInput, Button, Platform } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-import { db, auth } from './firebaseConfig';
-import { collection, addDoc, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { supabase } from './supabaseClient';
 
 export default function HomeScreen() {
   const [region, setRegion] = useState(null);
@@ -32,16 +31,24 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
-    const q = query(collection(db, 'mama_noktalari'), orderBy('timestamp', 'desc'));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const data = [];
-      querySnapshot.forEach((doc) => {
-        data.push({ id: doc.id, ...doc.data() });
-      });
-      setMarkers(data);
-    });
-    return unsubscribe;
+    fetchMarkers();
+    // Supabase'de gerçek zamanlı dinleme için aşağıdaki kodu kullanabilirsiniz:
+    const subscription = supabase
+      .channel('public:mama_noktalari')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mama_noktalari' }, fetchMarkers)
+      .subscribe();
+    return () => {
+      supabase.removeChannel(subscription);
+    };
   }, []);
+
+  const fetchMarkers = async () => {
+    const { data, error } = await supabase
+      .from('mama_noktalari')
+      .select('*')
+      .order('timestamp', { ascending: false });
+    if (!error) setMarkers(data || []);
+  };
 
   const handleLongPress = (e) => {
     setNewMarker(e.nativeEvent.coordinate);
@@ -52,15 +59,18 @@ export default function HomeScreen() {
     setModalVisible(false);
     if (!newMarker) return;
     try {
-      await addDoc(collection(db, 'mama_noktalari'), {
-        latitude: newMarker.latitude,
-        longitude: newMarker.longitude,
-        note: note,
-        timestamp: new Date(),
-        userId: auth.currentUser ? auth.currentUser.uid : null,
-      });
+      const { error } = await supabase.from('mama_noktalari').insert([
+        {
+          latitude: newMarker.latitude,
+          longitude: newMarker.longitude,
+          note: note,
+          timestamp: new Date().toISOString(),
+        },
+      ]);
+      if (error) throw error;
       setNote('');
       setNewMarker(null);
+      fetchMarkers();
     } catch (e) {
       alert('Bir hata oluştu!');
     }
@@ -83,7 +93,7 @@ export default function HomeScreen() {
             key={marker.id}
             coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
             title={marker.note || 'Mama Noktası'}
-            description={marker.timestamp?.toDate?.().toLocaleString?.() || ''}
+            description={marker.timestamp ? new Date(marker.timestamp).toLocaleString() : ''}
           />
         ))}
       </MapView>

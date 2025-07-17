@@ -1,28 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Button, StyleSheet, Alert } from 'react-native';
-import { db } from './firebaseConfig';
-import { collection, onSnapshot, query, orderBy, deleteDoc, doc } from 'firebase/firestore';
+import { supabase } from './supabaseClient';
 
 export default function AdminScreen() {
   const [locations, setLocations] = useState([]);
 
   useEffect(() => {
-    const q = query(collection(db, 'mama_noktalari'), orderBy('timestamp', 'desc'));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const data = [];
-      querySnapshot.forEach((doc) => {
-        data.push({ id: doc.id, ...doc.data() });
-      });
-      setLocations(data);
-    });
-    return unsubscribe;
+    fetchLocations();
+    const subscription = supabase
+      .channel('public:mama_noktalari')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'mama_noktalari' }, fetchLocations)
+      .subscribe();
+    return () => {
+      supabase.removeChannel(subscription);
+    };
   }, []);
+
+  const fetchLocations = async () => {
+    const { data, error } = await supabase
+      .from('mama_noktalari')
+      .select('*')
+      .order('timestamp', { ascending: false });
+    if (!error) setLocations(data || []);
+  };
 
   const handleDelete = (id) => {
     Alert.alert('Sil', 'Bu mama noktasını silmek istediğinize emin misiniz?', [
       { text: 'İptal', style: 'cancel' },
       { text: 'Sil', style: 'destructive', onPress: async () => {
-        await deleteDoc(doc(db, 'mama_noktalari', id));
+        await supabase.from('mama_noktalari').delete().eq('id', id);
+        fetchLocations();
       }},
     ]);
   };
@@ -32,12 +39,12 @@ export default function AdminScreen() {
       <Text style={styles.title}>Tüm Mama Noktaları</Text>
       <FlatList
         data={locations}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id?.toString()}
         renderItem={({ item }) => (
           <View style={styles.item}>
-            <Text>Koordinat: {item.latitude.toFixed(5)}, {item.longitude.toFixed(5)}</Text>
+            <Text>Koordinat: {item.latitude?.toFixed(5)}, {item.longitude?.toFixed(5)}</Text>
             <Text>Not: {item.note || '-'}</Text>
-            <Text>Tarih: {item.timestamp?.toDate?.().toLocaleString?.() || ''}</Text>
+            <Text>Tarih: {item.timestamp ? new Date(item.timestamp).toLocaleString() : ''}</Text>
             <Button title="Sil" color="red" onPress={() => handleDelete(item.id)} />
           </View>
         )}
